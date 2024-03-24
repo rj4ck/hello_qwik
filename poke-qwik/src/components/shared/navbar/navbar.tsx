@@ -1,5 +1,7 @@
+import {Link} from "@builder.io/qwik-city";
 import { component$ } from "@builder.io/qwik";
 import { QwikLogo } from "~/components/icons/qwik";
+
 import styles from "./navbar.module.css";
 
 export default component$(() => {
@@ -7,11 +9,17 @@ export default component$(() => {
     <header class={styles.header}>
       <div class={["container", styles.wrapper]}>
         <div class={styles.logo}>
-          <a href="/poke-qwik/public" title="qwik">
+          <Link href="/" title="poke-qwik">
             <QwikLogo height={50} />
-          </a>
+          </Link>
         </div>
-      </div>
+
+        <ul>
+          <Link href={"/pokemons/list-ssr"}>SSR</Link>
+          <Link href={"/pokemons/list-client"}>Client</Link>
+        </ul>
+
+			</div>
     </header>
   );
 });
