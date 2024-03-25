@@ -1,5 +1,5 @@
 import { $, component$, useSignal } from "@builder.io/qwik";
-import { type DocumentHead, Link, useNavigate } from "@builder.io/qwik-city";
+import { type DocumentHead, useNavigate } from "@builder.io/qwik-city";
 import { PokemonImage } from "~/components/pokemons/pokemon-image";
 
 export default component$(() => {
@@ -16,8 +16,8 @@ export default component$(() => {
       return pokemonID.value += value
   })
 
-  const goToPokemon = $(() => {
-    nav(`/pokemon/${pokemonID.value}`)
+  const goToPokemon = $(async () => {
+    await nav(`/pokemon/${pokemonID.value}`)
   })
 
   return (
@@ -42,7 +42,7 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: "PokeQwik",
+  title: "Poke-API with Qwik",
   meta: [
     {
       name: "description",

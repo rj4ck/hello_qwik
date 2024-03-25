@@ -1,4 +1,4 @@
-import {component$, useSignal, useTask$} from "@builder.io/qwik";
+import { component$, useComputed$, useSignal, useTask$ } from "@builder.io/qwik";
 
 interface Props {
     id: number | string;
@@ -16,11 +16,17 @@ export const PokemonImage = component$(({ id, size = 200, backImage = false, isV
         isLoaded.value = false
     });
 
-    let imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon`
+    const imageUrl = useComputed$(() => {
+      return (backImage)
+        ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/${id}.png`
+        : `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`
+    })
 
-    if (backImage) {
-        imageUrl = `${imageUrl}/back`
-    }
+    // let imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon`
+    //
+    // if (backImage) {
+    //     imageUrl = `${imageUrl}/back`
+    // }
 
     return (
         <div class={"flex items-center justify-center"} style={{ width: `${size}px`, height: `${size}px`}}>
@@ -30,7 +36,7 @@ export const PokemonImage = component$(({ id, size = 200, backImage = false, isV
             <img width={size}
                  height={size}
                  alt={"Pokemon Sprite"}
-                 src={`${imageUrl}/${id}.png`}
+                 src={imageUrl.value}
                  class={[{ "hidden": !isLoaded.value, "brightness-0": !isVisible }, 'transition-all']}
                  onLoad$={() => isLoaded.value = true} />
         </div>

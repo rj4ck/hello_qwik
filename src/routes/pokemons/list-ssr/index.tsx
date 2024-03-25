@@ -1,16 +1,15 @@
 import { $, component$, useComputed$ } from "@builder.io/qwik";
 import { type DocumentHead, routeLoader$, useLocation, useNavigate } from "@builder.io/qwik-city";
 
-import {BasicPokemonInfo, SmallPokemon} from "~/intefaces";
-import {getSmallPokemons} from "~/helpers/get-small-pokemons";
-import {PokemonImage} from "~/components/pokemons/pokemon-image";
+import type { SmallPokemon} from "~/intefaces";
+import { getSmallPokemons } from "~/helpers/get-small-pokemons";
+import { PokemonImage } from "~/components/pokemons/pokemon-image";
 
 export const usePokemonList = routeLoader$<SmallPokemon[]>(async ({ url, query, redirect, pathname }) => {
 
   const offset = Number(query.get("offset") ?? "0");
-  const limit = Number(query.get("limit") ?? "10");
 
-  return getSmallPokemons(limit, offset)
+  return getSmallPokemons(10, offset)
 });
 export default component$(() => {
 
@@ -46,7 +45,7 @@ export default component$(() => {
       </div>
 
       <div class={"grid grid-cols-6 mt-5"}>
-        {pokemons.value?.map((pokemon) => (
+        {pokemons.value.map((pokemon) => (
           <div key={pokemon.name} class={"m-5 flex flex-col justify-center items-center"}>
             <PokemonImage id={pokemon.id} />
             <span class={"capitalize"}>{pokemon.name}</span>
