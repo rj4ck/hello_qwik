@@ -1,38 +1,32 @@
-import {$, component$, useContext } from "@builder.io/qwik";
+import {$, component$ } from "@builder.io/qwik";
 import { type DocumentHead, useNavigate } from "@builder.io/qwik-city";
+import {usePokemonGame} from "~/hooks/use-pokemon-game";
 import { PokemonImage } from "~/components/pokemons/pokemon-image";
-import { PokemonGameContext } from "~/context";
 
 export default component$(() => {
 
   const nav = useNavigate();
-  const pokemonGame = useContext(PokemonGameContext)
+  const { nextPokemon, previousPokemon, pokemonID, showBackImage, isPokemonVisible, toggleFromBack, toggleVisible } = usePokemonGame();
 
-  const changePokemonID = $((value: number) => {
-      if (pokemonGame.pokemonID + value <= 0) return;
-
-      return pokemonGame.pokemonID += value
-  })
-
-  const goToPokemon = $(async () => {
-    await nav(`/pokemon/${pokemonGame.pokemonID}`)
+  const goToPokemon = $(async (id: number) => {
+    await nav(`/pokemon/${id}`)
   })
 
   return (
     <>
       <span class={"text-2xl"}>Simple search</span>
 
-      <span class={"text-9xl"}>{pokemonGame.pokemonID}</span>
+      <span class={"text-9xl"}>{pokemonID}</span>
 
-      <div onClick$={goToPokemon}>
-        <PokemonImage id={pokemonGame.pokemonID} backImage={pokemonGame.showBackImage} isVisible={pokemonGame.isPokemonVisible} />
+      <div onClick$={() => goToPokemon(pokemonID.value)}>
+        <PokemonImage id={pokemonID.value} backImage={showBackImage.value} isVisible={isPokemonVisible.value} />
       </div>
 
       <div class={"mt-2 "}>
-        <button onClick$={() => changePokemonID(-1)} class={"btn btn-primary mr-2"}>Previous</button>
-        <button onClick$={() => changePokemonID(1)} class={"btn btn-primary mr-2"}>Next</button>
-        <button onClick$={() => pokemonGame.showBackImage = !pokemonGame.showBackImage} class={"btn btn-primary mr-2"}>Flip</button>
-        <button onClick$={() => pokemonGame.isPokemonVisible = !pokemonGame.isPokemonVisible} class={"btn btn-primary"}>Reveal</button>
+        <button onClick$={previousPokemon} class={"btn btn-primary mr-2"}>Previous</button>
+        <button onClick$={nextPokemon} class={"btn btn-primary mr-2"}>Next</button>
+        <button onClick$={toggleFromBack} class={"btn btn-primary mr-2"}>Flip</button>
+        <button onClick$={toggleVisible} class={"btn btn-primary"}>Reveal</button>
       </div>
 
     </>
