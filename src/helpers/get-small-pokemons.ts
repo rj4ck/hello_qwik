@@ -1,4 +1,4 @@
-import {PokemonListResponse, SmallPokemon} from "~/intefaces";
+import type { PokemonListResponse, SmallPokemon } from "~/intefaces";
 
 export const getSmallPokemons = async (limit: number = 10, offset: number = 0): Promise<SmallPokemon[]> => {
 

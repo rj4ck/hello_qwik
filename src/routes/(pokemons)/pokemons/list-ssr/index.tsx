@@ -7,7 +7,7 @@ import { getSmallPokemons } from "~/helpers/get-small-pokemons";
 import { PokemonImage } from "~/components/pokemons/pokemon-image";
 import {requestAboutPokemon} from "~/helpers/get-openai-response";
 
-export const usePokemonList = routeLoader$<SmallPokemon[]>(async ({ url, query, redirect, pathname }) => {
+export const usePokemonList = routeLoader$<SmallPokemon[]>(async ({ query }) => {
 
   const offset = Number(query.get("offset") ?? "0");
 
