@@ -3,17 +3,25 @@ import {component$, Slot, useStylesScoped$} from '@builder.io/qwik';
 import ModalStyles from './modal.css?inline';
 
 interface Props {
-  showModal: boolean
-  closeModal: PropFunction<() => void>
+  showModal: boolean;
+  persistent?: boolean;
+  size?: 'sm' | 'md' | 'lg';
+  closeModal: PropFunction<() => void>;
 }
 
-export const Modal = component$( ({ showModal, closeModal } : Props) => {
+export const Modal = component$( ({ size = 'md', showModal, closeModal, persistent = false } : Props) => {
 
   useStylesScoped$(ModalStyles);
 
   return (
-    <div class={showModal ?"modal-background" : "hidden"}>
-      <div class="modal-content">
+    <div id={"modal-content"} onClick$={(event) => {
+      const elementID = (event.target as HTMLDivElement).id;
+
+      if (elementID === "modal-content" && !persistent) {
+        closeModal();
+      }
+    }} class={showModal ?"modal-background" : "hidden"}>
+      <div class={`modal-content modal-${size}`}>
 
         <div class="mt-3 text-center">
 

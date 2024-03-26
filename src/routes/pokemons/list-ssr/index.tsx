@@ -1,10 +1,11 @@
-import {$, component$, useComputed$, useSignal, useStore} from "@builder.io/qwik";
+import {$, component$, useComputed$, useSignal, useStore, useVisibleTask$} from "@builder.io/qwik";
 import { type DocumentHead, routeLoader$, useLocation, useNavigate } from "@builder.io/qwik-city";
 
 import { Modal } from "~/components/shared";
 import type { SmallPokemon} from "~/intefaces";
 import { getSmallPokemons } from "~/helpers/get-small-pokemons";
 import { PokemonImage } from "~/components/pokemons/pokemon-image";
+import {requestAboutPokemon} from "~/helpers/get-openai-response";
 
 export const usePokemonList = routeLoader$<SmallPokemon[]>(async ({ url, query, redirect, pathname }) => {
 
@@ -18,7 +19,8 @@ export default component$(() => {
   const location = useLocation();
   const pokemons = usePokemonList();
   const modalVisible = useSignal(false);
-  const modalContainer = useStore({
+  const openIAResponse = useSignal('');
+  const modalPokemon = useStore({
     id: '',
     name: ''
   })
@@ -34,17 +36,32 @@ export default component$(() => {
     if (currentOffset.value + value < 0 ) return;
 
     await nav(`/pokemons/list-ssr?offset=${currentOffset.value + value}`)
-  })
+  });
 
   const showModal = $((id: string, name: string) => {
-    modalContainer.id = id;
-    modalContainer.name = name;
+    modalPokemon.id = id;
+    modalPokemon.name = name;
 
     modalVisible.value = true
   });
 
   const closeModal = $(() => {
     modalVisible.value = false
+  });
+
+  //TODO: Test render
+  // eslint-disable-next-line qwik/no-use-visible-task
+  useVisibleTask$(({ track}) => {
+
+    track(() => modalPokemon.name);
+
+    openIAResponse.value = "";
+
+    if (modalPokemon.name.length > 0) {
+      requestAboutPokemon(modalPokemon.name).then((response) => {
+        openIAResponse.value = response
+      })
+    }
   })
 
   return (
@@ -69,18 +86,20 @@ export default component$(() => {
         ))}
       </div>
 
-      <Modal showModal={modalVisible.value} closeModal={closeModal}>
-        <div q:slot={"title"}>{modalContainer.name}</div>
+      <Modal persistent={true} showModal={modalVisible.value} closeModal={closeModal}>
+        <div q:slot={"title"}>{modalPokemon.name}</div>
         <div q:slot={"content"} class={"flex flex-col justify-center items-center"}>
 
-          <PokemonImage id={modalContainer.id}/>
+          <PokemonImage id={modalPokemon.id}/>
 
-          <span>Preguntandole a OpenAI</span>
+          <span>
+            {openIAResponse.value === "" ? "Searching..." : openIAResponse.value || "Nothing to show"}
+          </span>
         </div>
       </Modal>
     </>
   )
-})
+});
 
 export const head: DocumentHead = {
   title: "SSR",
