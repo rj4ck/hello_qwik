@@ -1,6 +1,14 @@
 import {component$, Slot} from "@builder.io/qwik";
 import Navbar from "~/components/shared/navbar/navbar";
+import {routeLoader$} from "@builder.io/qwik-city";
 
+export const useCheckCookie = routeLoader$(({ cookie, redirect }) => {
+  const jwtCookie = cookie.get('jwt');
+
+  if (!jwtCookie) {
+    throw redirect(302, '/login');
+  }
+})
 export default component$(() => {
 
   return (

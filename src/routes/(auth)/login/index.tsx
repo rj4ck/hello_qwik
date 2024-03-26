@@ -51,7 +51,7 @@ export default component$(() => {
         <label for="password">Password</label>
       </div>
       <div class="relative">
-        <button type={"submit"}>Ingresar</button>
+        <button type={"submit"}>Login</button>
       </div>
 
       <p>
